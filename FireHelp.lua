@@ -24,8 +24,8 @@ local player = tostring(u8:decode(mainIni.main.name))
 
 -- Блок Update
 local update_state = false
-local script_version = 2
-local script_version_text = "1.01"
+local script_version = 1.01
+local script_version_text = tostring(script_version)
 
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
 local update_path = getWorkingDirectory() .. "/update.ini"
