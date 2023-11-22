@@ -1,15 +1,15 @@
--- ГЋГ±Г­Г®ГўГ­Г Гї ГЎГЁГЎГ«ГЁГ®ГІГҐГЄГ 
+-- Основная библиотека
 local ev = require 'lib.samp.events'
 local inicfg = require 'inicfg'
 local imgui = require 'imgui'
 local encoding = require 'encoding'
 local update_status = require('moonloader').download_status
 
--- ГЃГ«Г®ГЄ inicfg
+-- Блок inicfg
 local directIni = "moonloader\\fh_setting.ini"
 local mainIni = inicfg.load(nil, directIni)
 
--- ГЃГ«Г®ГЄ Imgui
+-- Блок Imgui
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
 
@@ -18,11 +18,11 @@ local main_windows_state = imgui.ImBool(false)
 local text_buffer = imgui.ImBuffer(256)
 local siren = imgui.ImBool(false)
 
--- ГЏГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГјГ±ГЄГЁГҐ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»ГҐ
+-- Пользовательские переменные
 local isFire = false
 local player = tostring(u8:decode(mainIni.main.name))
 
--- ГЃГ«Г®ГЄ Update
+-- Блок Update
 local update_state = false
 local script_version = 1.01
 local script_version_text = tostring(script_version)
@@ -33,8 +33,10 @@ local update_path = getWorkingDirectory() .. "/update.ini"
 local script_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/FireHelp.lua"
 local script_path = thisScript().path
 
+local changelog_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/changelog"
+local changelog_path = thisScript().path
 
--- Г‡Г ГЇГіГ±ГЄ ГЇГ«Г ГЈГЁГ­Г 
+-- Запуск плагина
 function main()
     if not isSampfuncsLoaded() or not isSampLoaded() then
         return
@@ -46,8 +48,9 @@ function main()
 	downloadUrlToFile(update_url, update_path, function(id, status) 
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
 			updateIni = inicfg.load(nil, update_path)
+			changelogIni = inicfg.load(nil,changelog_path)
 			if tonumber(updateIni.info.vers) > script_version then
-				sampAddChatMessage("{fbec5d}[Update] {ffffff}ГЌГ®ГўГ®ГҐ Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
+				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
 				update_state = true
 			end
 			os.remove(update_path)
@@ -66,7 +69,7 @@ function main()
 		if update_state then
 			downloadUrlToFile(script_url, script_path, function(id, status) 
 				if status == update_status.STATUS_ENDDOWNLOADDATA then
-					sampAddChatMessage("{fbec5d}[Update] {ffffff}- CГЄГ°ГЁГЇГІ Г®ГЎГ­Г®ГўГ«ГҐГ­", -1)
+					sampAddChatMessage("[Update] {ffffff}- Cкрипт обновлен", -1)
 					thisScript():reload()
 				end
 			update_state = false
@@ -77,7 +80,7 @@ function main()
 			local sumX = math.abs(math.ceil(x) - math.ceil(player_x))
 			local sumZ = math.abs(math.ceil(z) - math.ceil(player_z))
 			if (sumX <= 30) and (sumZ <= 60) then
-				sampSendChat("/i to disp: "..player..", ГЇГ°ГЁГҐГµГ Г« Г­Г  Г¬ГҐГ±ГІГ® ГўГ®Г§ГЈГ Г°Г Г­ГЁГї.", -1)
+				sampSendChat("/i to disp: "..player..", приехал на место возгарания.", -1)
 				isFire = false
 			end
 		end
@@ -87,7 +90,7 @@ function main()
     end
 end
 
--- Г‚ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЇГ°Г®ГЎГ«ГҐГ±ГЄГ®ГўГ»Гµ Г¬Г ГїГ·ГЄГ®Гў
+-- Включение проблесковых маячков
 function ev.onSendEnterVehicle(vehicleID, passenger)
 	if ((vehicleID == 1269) or (vehicleID == 1271) or (vehicleID == 1270) or (vehicleID == 1268) or (vehicleID == 551) or (vehicleID == 552)) and (passenger == false) and (mainIni.main.siren == true) then
 		lua_thread.create(function()
@@ -98,63 +101,62 @@ function ev.onSendEnterVehicle(vehicleID, passenger)
 	end
 end
 
--- ГђГҐГ ГЄГ¶ГЁГї Г­Г  Г±Г®Г®ГЎГ№ГҐГ­ГЁГї Гў Г·Г ГІ
+-- Реакция на сообщения в чат
 function ev.onServerMessage(color, text)
-	if text:find("ГЋГІГЇГ°Г ГўГ«ГїГ©ГІГҐГ±Гј Г­Г  Г Г¤Г°ГҐГ± {fbec5d}(%a+.+%d+)") then
-		local address = text:match("ГЋГІГЇГ°Г ГўГ«ГїГ©ГІГҐГ±Гј Г­Г  Г Г¤Г°ГҐГ± {fbec5d}(%a+.+%d+)")
-		sampSendChat("/i to disp: "..player..", ГЇГ°ГЁГ­ГїГ« ГўГ»Г§Г®Гў ГЇГ® Г Г¤Г°ГҐГ±Гі: " .. upper_string(address), -1)
+	if text:find("Отправляйтесь на адрес {fbec5d}(%a+.+%d+)") then
+		local address = text:match("Отправляйтесь на адрес {fbec5d}(%a+.+%d+)")
+		sampSendChat("/i to disp: "..player..", принял вызов по адресу: " .. upper_string(address), -1)
 		lua_thread.create(function()
 		wait(1000)
 		isFire = true
 		end)
 	end
-	if text:find("Г‚Г±ГҐ Г®Г·Г ГЈГЁ ГўГ®Г§ГЈГ®Г°Г Г­ГЁГї Г«ГЁГЄГўГЁГ¤ГЁГ°Г®ГўГ Г­Г». ГЋГІГЇГ°Г ГўГ«ГїГ©ГІГҐГ±Гј Г®ГЎГ°Г ГІГ­Г® Гў Г¤ГҐГЇГ Г°ГІГ Г¬ГҐГ­ГІ.") then
-		sampSendChat("/i to disp: "..player..", ГЇГ®Г¦Г Г° ГЇГ®ГІГіГёГҐГ­, ГўГ®Г§ГўГ°Г Г№Г ГѕГ±Гј Гў Г¤ГҐГЇГ Г°ГІГ Г¬ГҐГ­ГІ.", -1)
+	if text:find("Все очаги возгорания ликвидированы. Отправляйтесь обратно в департамент.") then
+		sampSendChat("/i to disp: "..player..", пожар потушен, возвращаюсь в департамент.", -1)
 		v = getCarCharIsUsing(PLAYER_PED)
         switchCarSiren(v, not isCarSirenOn(v))
 	end
 end
 
--- ГЋГІГ®ГЎГ°Г Г¦ГҐГ­ГЁГҐ Г®ГЄГ­Г 
+-- Отображение окна
 function cmd_imgui(arg)
 	main_windows_state.v = not main_windows_state.v
 	imgui.Process = main_windows_state.v
 end
 
--- Г‚ГЁГ§ГіГ Г«ГјГ­Г®ГҐ Г®ГЄГ­Г® Гў ГЁГЈГ°ГҐ
+-- Визуальное окно в игре
 function imgui.OnDrawFrame()
-	
 	text_buffer.v = mainIni.main.name
 	siren.v = mainIni.main.siren
 	imgui.SetNextWindowSize(imgui.ImVec2(200,140), imgui.Cond.FirstUseEver)
 	imgui.SetNextWindowPos(imgui.ImVec2((sw / 2), sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-	imgui.Begin(u8"ГЌГ Г±ГІГ°Г®Г©ГЄГ  ГЇГ«Г ГЈГЁГ­Г ", main_windows_state, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoMove)
+	imgui.Begin(u8"Настройка плагина", main_windows_state, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoMove)
 	imgui.SetCursorPosX(40)
-	imgui.Text(u8"ГЂГўГІГ®Г° ГЇГ«Г ГЈГЁГ­Г  - GutMax")
-	imgui.Text(u8"Г‚ГўГҐГ¤ГЁГІГҐ Г±ГўГ®Г© Г­ГЁГЄ (Г­Г  Г°ГіГ±Г±ГЄГ®Г¬)")
+	imgui.Text(u8"Автор плагина - GutMax")
+	imgui.Text(u8"Введите свой ник (на русском)")
 	imgui.SetCursorPosX(30)
 	imgui.InputText("", text_buffer)
 	imgui.SetCursorPosX(30)
-	imgui.Checkbox(u8'ГЏГ®Г¦Г Г°Г­Г Гї Г±ГЁГ°ГҐГ­Г ', siren)
+	imgui.Checkbox(u8'Пожарная сирена', siren)
 	imgui.SetCursorPosX(60)
 	mainIni.main.name = text_buffer.v
 	mainIni.main.siren = siren.v
-	if imgui.Button(u8'Г‘Г®ГµГ°Г Г­ГЁГІГј') then
+	if imgui.Button(u8'Сохранить') then
 		if inicfg.save(mainIni, directIni) then
-			sampAddChatMessage("{fbec5d}[FireHelp]{ffffff} Г‘Г®ГµГ°Г Г­ГҐГ­Г®!",-1)
+			sampAddChatMessage("{fbec5d}[FireHelp]{ffffff} Сохранено!",-1)
 		end
 	end
 	imgui.End()
 end
 
--- ГЋГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІ ГЁГЈГ°Г®ГЄГ  / Г¬Г Г°ГЄГҐГ°Г  
+-- Определение координат игрока / маркера 
 function pos()
 	local player_x, player_y, player_z = getCharCoordinates(playerPed)
 	res, x, y, z = SearchMarker(player_x, player_y, player_z, 9999.0, false)
 	return player_x, player_z, x,z
 end
 
--- ГЏГ®ГЁГ±ГЄ Г¬Г Г°ГЄГҐГ°Г  Г­Г  ГЄГ Г°ГІГҐ
+-- Поиск маркера на карте
 function SearchMarker(posX, posY, posZ, radius, isRace)
     local ret_posX = 0.0
     local ret_posY = 0.0
@@ -183,7 +185,7 @@ function SearchMarker(posX, posY, posZ, radius, isRace)
     return isFind, ret_posX, ret_posY, ret_posZ
 end
 
--- ГЏГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ Гў ГЄГ°Г Г±ГЁГўГ»Г© Г Г¤Г°ГҐГ± 
+-- Преобразование в красивый адрес 
 function upper_string(str)
 	str = str:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
 	return str
