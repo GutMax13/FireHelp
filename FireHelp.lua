@@ -46,9 +46,7 @@ function main()
     end
 	downloadUrlToFile(update_url, update_path, function(id, status) 
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
-			downloadUrlToFile(changelog_url, changelog_path, function(id, status)
-				changelogIni = inicfg.load(nil, changelog_path)
-			end)
+			update_changelog(changelog_url, changelog_path)
 			updateIni = inicfg.load(nil, update_path)
 			if tonumber(updateIni.info.vers) > script_version then
 				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
@@ -190,4 +188,10 @@ end
 function upper_string(str)
 	str = str:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
 	return str
+end
+
+function update_changelog(changelog_url, changelog_path)
+	downloadUrlToFile(changelog_url, changelog_path, function(id, status)
+		changelogIni = inicfg.load(nil, changelog_path)
+	end)
 end
