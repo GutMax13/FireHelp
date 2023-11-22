@@ -49,7 +49,6 @@ function main()
 			updateIni = inicfg.load(nil, update_path)
 			if tonumber(updateIni.info.vers) > script_version then
 				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
-				update_changelog()
 				update_state = true
 			end
 			os.remove(update_path)
@@ -73,6 +72,7 @@ function main()
 				end
 			update_state = false
 			end)
+			update_changelog()
 		end
 		if isFire then
 			player_x, player_z, x,z = pos()
@@ -191,6 +191,8 @@ function upper_string(str)
 end
 
 function update_changelog()
-	changelogIni = inicfg.load(nil, changelog_path)
-	sampAddChatMessage(tostring(changelogIni.update.versions), -1)
+	downloadUrlToFile(changelog_url, changelog_path, function(id, status) 
+		changelogIni = inicfg.load(nil, changelog_path)
+		ampAddChatMessage(tostring(changelogIni.update.versions), -1)
+	end)
 end
