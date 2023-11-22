@@ -24,8 +24,8 @@ local player = tostring(u8:decode(mainIni.main.name))
 
 -- Блок Update
 local update_state = false
-local script_version = 1
-local script_version_text = "1.00"
+local script_version = 2
+local script_version_text = "1.01"
 
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
 local update_path = getWorkingDirectory() .. "/update.ini"
@@ -128,7 +128,7 @@ function imgui.OnDrawFrame()
 	siren.v = mainIni.main.siren
 	imgui.SetNextWindowSize(imgui.ImVec2(200,140), imgui.Cond.FirstUseEver)
 	imgui.SetNextWindowPos(imgui.ImVec2((sw / 2), sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-	imgui.Begin(u8"Настройка плагина", main_windows_state)
+	imgui.Begin(u8"Настройка плагина", main_windows_state, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoMove)
 	imgui.SetCursorPosX(40)
 	imgui.Text(u8"Автор плагина - GutMax")
 	imgui.Text(u8"Введите свой ник (на русском)")
