@@ -46,7 +46,6 @@ function main()
     end
 	downloadUrlToFile(update_url, update_path, function(id, status) 
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
-			update_changelog(changelog_url, changelog_path)
 			updateIni = inicfg.load(nil, update_path)
 			if tonumber(updateIni.info.vers) > script_version then
 				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
@@ -73,6 +72,7 @@ function main()
 				end
 			update_state = false
 			end)
+			update_changelog(changelog_url, changelog_path)
 		end
 		if isFire then
 			player_x, player_z, x,z = pos()
