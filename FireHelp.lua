@@ -24,8 +24,8 @@ local player = tostring(u8:decode(mainIni.main.name))
 
 -- Блок Update
 local update_state = false
-local script_version = 0.9
-local script_version_text = "0.9"
+local script_version = 1
+local script_version_text = "1.00"
 
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
 local update_path = getWorkingDirectory() .. "/update.ini"
@@ -47,7 +47,7 @@ function main()
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
 			updateIni = inicfg.load(nil, update_path)
 			if tonumber(updateIni.info.vers) > script_version then
-				sampAddChatMessage("{fbec5d}[Update] Новое обновление " .. script_version_text .. "v. -> ".. updateIni.info.vers .."v.", -1)
+				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
 				update_state = true
 			end
 			os.remove(update_path)
@@ -57,16 +57,16 @@ function main()
 	imgui.Process = false
 	sampRegisterChatCommand("fh", cmd_imgui)
 	if mainIni.main.name == "" then
-		sampAddChatMessage("{fbec5d}[FireHelp | {ffffff}Status - No Working {fbec5d}| Version - 0.9]")
+		sampAddChatMessage("{fbec5d}[FireHelp | {ffffff}Status - No Working {fbec5d}| Version - "..script_version_text.."]")
 	else
-		sampAddChatMessage("{fbec5d}[FireHelp | {ffffff}Status - Working {fbec5d}| Version - 0.9]")
+		sampAddChatMessage("{fbec5d}[FireHelp | {ffffff}Status - Working {fbec5d}| Version - "..script_version_text.."]")
 	end
     while true do
         wait(0)
 		if update_state then
 			downloadUrlToFile(script_url, script_path, function(id, status) 
 				if status == update_status.STATUS_ENDDOWNLOADDATA then
-					sampAddChatMessage("Update - Cкрипт обновлен", -1)
+					sampAddChatMessage("[Update] {ffffff}- Cкрипт обновлен", -1)
 					thisScript():reload()
 				end
 			update_state = false
