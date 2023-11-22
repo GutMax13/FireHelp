@@ -47,9 +47,9 @@ function main()
 	downloadUrlToFile(update_url, update_path, function(id, status) 
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
 			updateIni = inicfg.load(nil, update_path)
-			update_changelog()
 			if tonumber(updateIni.info.vers) > script_version then
 				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
+				update_changelog()
 				update_state = true
 			end
 			os.remove(update_path)
