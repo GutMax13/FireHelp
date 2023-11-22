@@ -71,8 +71,8 @@ function main()
 					thisScript():reload()
 				end
 			update_state = false
-			end)
 			update_changelog(changelog_url, changelog_path)
+			end)
 		end
 		if isFire then
 			player_x, player_z, x,z = pos()
