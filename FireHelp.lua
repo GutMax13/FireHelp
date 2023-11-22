@@ -33,8 +33,8 @@ local update_path = getWorkingDirectory() .. "/update.ini"
 local script_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/FireHelp.lua"
 local script_path = thisScript().path
 
-local changelog_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/changelog"
-local changelog_path = thisScript().path
+local changelog_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/changelog.ini"
+local changelog_path = getWorkingDirectory() .. "/changelog.ini"
 
 -- Запуск плагина
 function main()
@@ -44,11 +44,12 @@ function main()
     while not isSampAvailable() do
         wait(0)
     end
-	
 	downloadUrlToFile(update_url, update_path, function(id, status) 
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
+			downloadUrlToFile(changelog_url, changelog_path, function(id, status)
+				changelogIni = inicfg.load(nil, changelog_path)
+			end)
 			updateIni = inicfg.load(nil, update_path)
-			changelogIni = inicfg.load(nil,changelog_path)
 			if tonumber(updateIni.info.vers) > script_version then
 				sampAddChatMessage("{fbec5d}[Update] {ffffff}Новое обновление (" .. script_version_text .. " >>> ".. updateIni.info.vers ..")", -1)
 				update_state = true
