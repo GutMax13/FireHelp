@@ -30,7 +30,7 @@ local script_version_text = "1.01"
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
 local update_path = getWorkingDirectory() .. "/update.ini"
 
-local script_url = ""
+local script_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/FireHelp.lua"
 local script_path = thisScript().path
 
 
