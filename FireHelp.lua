@@ -44,10 +44,10 @@ function main()
     end
 	
 	downloadUrlToFile(update_url, update_path, function(id, status) 
-		if status = update_status.STATUS_ENDDOWNLOADDATA then
+		if status == update_status.STATUS_ENDDOWNLOADDATA then
 			updateIni = inicfg.load(nil, update_path)
 			if tonumber(updateIni.info.vers) > script_version then
-				sampAddChatMessage("Новое обновление " .. script_version_text .. " -> ".. updateIni.info.vers, -1)
+				sampAddChatMessage("{fbec5d}[Update] Новое обновление " .. script_version_text .. "v. -> ".. updateIni.info.vers .."v.", -1)
 				update_state = true
 			end
 			os.remove(update_path)
@@ -65,11 +65,12 @@ function main()
         wait(0)
 		if update_state then
 			downloadUrlToFile(script_url, script_path, function(id, status) 
-				if status = update_status.STATUS_ENDDOWNLOADDATA then
+				if status == update_status.STATUS_ENDDOWNLOADDATA then
 					sampAddChatMessage("Update - Cкрипт обновлен", -1)
 					thisScript():reload()
 				end
 			update_state = false
+			end)
 		end
 		if isFire then
 			player_x, player_z, x,z = pos()
