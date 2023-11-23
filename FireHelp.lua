@@ -65,6 +65,7 @@ function main()
 	else
 		sampAddChatMessage("{fbec5d}[FireHelp | {ffffff}Status - Working {fbec5d}| Version - "..script_version_text.."]")
 	end
+	changelog_update()
     while true do
         wait(0)
 		if update_state then
@@ -89,7 +90,6 @@ function main()
 			imgui.Process = false
 		end
     end
-	changelog_update()
 end
 
 -- ¬ключение проблесковых ма€чков
@@ -201,9 +201,9 @@ function changelog_update()
 	downloadUrlToFile(changelog_url, changelog_path, function(id, status) 
 		if status == update_status.STATUS_ENDDOWNLOADDATA then
 			inicfg.load(nil, changelog_path)
+			file = io.open(changelog_path, "r")
+			versions = file:read("*a")
+			file:close()
 		end
 	end)
-	file = io.open(changelog_path, "r")
-	versions = file:read("*a")
-	file:close()
 end
