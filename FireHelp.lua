@@ -17,6 +17,7 @@ local sw, sh = getScreenResolution()
 local main_windows_state = imgui.ImBool(false)
 local text_buffer = imgui.ImBuffer(256)
 local siren = imgui.ImBool(false)
+local list = 0
 
 -- Пользовательские переменные
 local isFire = false
@@ -24,7 +25,7 @@ local player = tostring(u8:decode(mainIni.main.name))
 
 -- Блок Update
 local update_state = false
-local script_version = 1.00
+local script_version = 1.01
 local script_version_text = tostring(script_version)
 
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
@@ -33,8 +34,10 @@ local update_path = getWorkingDirectory() .. "/update.ini"
 local script_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/FireHelp.lua"
 local script_path = thisScript().path
 
-local changelog_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/changelog.ini"
-local changelog_path = getWorkingDirectory() .. "/changelog.ini"
+local changelog_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/changelog.txt"
+local changelog_path = "moonloader\\changelog.txt"
+
+local versions = ""
 
 -- Запуск плагина
 function main()
@@ -55,6 +58,8 @@ function main()
 		end
 	end)
 	
+	changelog_update()
+	os.remove(changelog_path)
 	imgui.Process = false
 	sampRegisterChatCommand("fh", cmd_imgui)
 	if mainIni.main.name == "" then
@@ -144,6 +149,10 @@ function imgui.OnDrawFrame()
 			sampAddChatMessage("{fbec5d}[FireHelp]{ffffff} Сохранено!",-1)
 		end
 	end
+	if imgui.CollapsingHeader(u8'Пример списка') then
+		imgui.TextWrapped(versions)
+		imgui.Separator()
+	end
 	imgui.End()
 end
 
@@ -187,4 +196,15 @@ end
 function upper_string(str)
 	str = str:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
 	return str
+end
+
+function changelog_update()
+	downloadUrlToFile(changelog_url, changelog_path, function(id, status) 
+		if status == update_status.STATUS_ENDDOWNLOADDATA then
+			inicfg.load(nil, changelog_path)
+		end
+	end)
+	file = io.open(changelog_path, "r")
+	versions = file:read("*a")
+	file:close()
 end
