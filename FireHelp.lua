@@ -35,7 +35,7 @@ local script_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/Fir
 local script_path = thisScript().path
 
 local changelog_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/changelog.txt"
-local changelog_path = "moonloader\\changelog.txt"
+local changelog_path = getWorkingDirectory() .. "/changelog.txt"
 
 local versions = ""
 
@@ -59,7 +59,6 @@ function main()
 	end)
 	
 	changelog_update()
-	os.remove(changelog_path)
 	imgui.Process = false
 	sampRegisterChatCommand("fh", cmd_imgui)
 	if mainIni.main.name == "" then
