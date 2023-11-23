@@ -25,7 +25,7 @@ local player = tostring(u8:decode(mainIni.main.name))
 
 -- Блок Update
 local update_state = false
-local script_version = 0.72
+local script_version = 0.8
 local script_version_text = tostring(script_version)
 
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
@@ -81,7 +81,7 @@ function main()
 			player_x, player_z, x,z = pos()
 			local sumX = math.abs(math.ceil(x) - math.ceil(player_x))
 			local sumZ = math.abs(math.ceil(z) - math.ceil(player_z))
-			if (sumX <= 30) and (sumZ <= 60) then
+			if (sumX <= 20) and (sumZ <= 60) then
 				sampSendChat("/i to disp: "..player..", приехал на место возгарания.", -1)
 				isFire = false
 			end
@@ -93,14 +93,15 @@ function main()
 end
 
 -- Включение проблесковых маячков
-function ev.onSendEnterVehicle(vehicleID, passenger)
-	if ((vehicleID == 1269) or (vehicleID == 1271) or (vehicleID == 1270) or (vehicleID == 1268) or (vehicleID == 551) or (vehicleID == 552)) and (passenger == false) and (mainIni.main.siren == true) then
-		lua_thread.create(function()
+function ev.onSendEnterVehicle()
+	lua_thread.create(function()
 		wait(4000)
-		v = getCarCharIsUsing(PLAYER_PED)
-        switchCarSiren(v, not isCarSirenOn(v))
-		end)
-	end
+		model = getCarModel(storeCarCharIsInNoSave(PLAYER_PED))
+		if (model == 407) and (mainIni.main.siren == true) then
+			v = getCarCharIsUsing(PLAYER_PED)
+			switchCarSiren(v, not isCarSirenOn(v))
+		end
+	end)
 end
 
 -- Реакция на сообщения в чат
@@ -109,7 +110,7 @@ function ev.onServerMessage(color, text)
 		local address = text:match("Отправляйтесь на адрес {fbec5d}(%a+.+%d+)")
 		sampSendChat("/i to disp: "..player..", принял вызов по адресу: " .. upper_string(address), -1)
 		lua_thread.create(function()
-		wait(1000)
+		wait(2000)
 		isFire = true
 		end)
 	end
@@ -130,7 +131,7 @@ end
 function imgui.OnDrawFrame()
 	text_buffer.v = mainIni.main.name
 	siren.v = mainIni.main.siren
-	imgui.SetNextWindowSize(imgui.ImVec2(200,140), imgui.Cond.FirstUseEver)
+	imgui.SetNextWindowSize(imgui.ImVec2(220,200), imgui.Cond.FirstUseEver)
 	imgui.SetNextWindowPos(imgui.ImVec2((sw / 2), sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
 	imgui.Begin(u8"Настройка плагина", main_windows_state, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoMove)
 	imgui.SetCursorPosX(40)
@@ -148,7 +149,7 @@ function imgui.OnDrawFrame()
 			sampAddChatMessage("{fbec5d}[FireHelp]{ffffff} Сохранено!",-1)
 		end
 	end
-	if imgui.CollapsingHeader(u8'Пример списка') then
+	if imgui.CollapsingHeader(u8'Список обновлений') then
 		imgui.TextWrapped(versions)
 		imgui.Separator()
 	end
