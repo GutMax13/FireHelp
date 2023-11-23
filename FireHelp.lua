@@ -24,7 +24,7 @@ local player = tostring(u8:decode(mainIni.main.name))
 
 -- Блок Update
 local update_state = false
-local script_version = 1.01
+local script_version = 1.00
 local script_version_text = tostring(script_version)
 
 local update_url = "https://raw.githubusercontent.com/GutMax13/FireHelp/main/update.ini"
@@ -72,7 +72,6 @@ function main()
 				end
 			update_state = false
 			end)
-			update_changelog()
 		end
 		if isFire then
 			player_x, player_z, x,z = pos()
@@ -188,11 +187,4 @@ end
 function upper_string(str)
 	str = str:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
 	return str
-end
-
-function update_changelog()
-	downloadUrlToFile(changelog_url, changelog_path, function(id, status) 
-		changelogIni = inicfg.load(nil, changelog_path)
-		ampAddChatMessage(tostring(changelogIni.update.versions), -1)
-	end)
 end
