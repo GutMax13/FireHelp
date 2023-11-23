@@ -58,7 +58,6 @@ function main()
 		end
 	end)
 	
-	changelog_update()
 	imgui.Process = false
 	sampRegisterChatCommand("fh", cmd_imgui)
 	if mainIni.main.name == "" then
@@ -90,6 +89,7 @@ function main()
 			imgui.Process = false
 		end
     end
+	changelog_update()
 end
 
 -- ¬ключение проблесковых ма€чков
